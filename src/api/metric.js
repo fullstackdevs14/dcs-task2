@@ -8,9 +8,8 @@ router.post('/:key', (req, res) => {
 
   const v = parseInt(value);
   if (Number.isNaN(v)) {
-    const err = new Error();
-    err.statusCode = 400;
-    throw err;
+    res.status(400).send({ success: false });
+    return;
   }
 
   storage.add(req.params.key, value);
