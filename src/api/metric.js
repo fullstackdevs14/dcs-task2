@@ -1,10 +1,9 @@
-const express = require("express");
+const express = require('express');
 
 const router = express.Router();
+const storage = require('../service/storage');
 
-const data = [];
-
-router.post("/:key", (req, res) => {
+router.post('/:key', (req, res) => {
   const { value } = req.body;
 
   const v = parseInt(value);
@@ -14,24 +13,13 @@ router.post("/:key", (req, res) => {
     throw err;
   }
 
-  data.push({
-    ts: new Date().getTime(),
-    key: req.params.key,
-    value: v,
-  });
+  storage.add(req.params.key, value);
 
   res.send({ success: true });
 });
 
-router.get("/:key/sum", (req, res) => {
-  const ts = new Date().getTime() - 3600000;
-  const filtered = data.filter(
-    (item) => item.ts >= ts && item.key === req.params.key
-  );
-
-  const sum = filtered.reduce((sum, item) => sum + item.value, 0);
-
-  res.send({ sum });
+router.get('/:key/sum', (req, res) => {
+  res.send({ sum: storage.sum(req.params.key) });
 });
 
 module.exports = router;
